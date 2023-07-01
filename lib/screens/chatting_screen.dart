@@ -245,12 +245,12 @@ class _MessagesListViewState extends State<_MessagesListView> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => ChatScreen(
-                                contacts: contactsWithMessages[index],
-                                messages: contactsWithMessages[index]
-                                    ['messages'],
-                                currentUser: '',
-                              )),
+                        builder: (_) => ChatScreen(
+                          contacts: contactsWithMessages[index],
+                          messages: contactsWithMessages[index]['messages'],
+                          currentUser: '',
+                        ),
+                      ),
                     );
                   },
                 ),
