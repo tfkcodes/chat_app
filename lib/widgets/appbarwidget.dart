@@ -1,11 +1,10 @@
-import 'package:chat_app/screens/blockedtext.dart';
-import 'package:chat_app/screens/feedback.dart';
-import 'package:chat_app/screens/promotions.dart';
-import 'package:chat_app/screens/settings.dart';
-import 'package:chat_app/screens/spantextscreen.dart';
-import 'package:flutter/material.dart';
-
 import '../constats/colors.dart';
+import 'package:flutter/material.dart';
+import 'package:chat_app/screens/feedback.dart';
+import 'package:chat_app/screens/settings.dart';
+import 'package:chat_app/screens/promotions.dart';
+import 'package:chat_app/screens/blockedtext.dart';
+import 'package:chat_app/screens/spantextscreen.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({
@@ -15,19 +14,21 @@ class DrawerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        width: MediaQuery.of(context).size.width *
-            0.75, // Adjust the value as needed
+        width: MediaQuery.of(context).size.width * 0.75,
         elevation: 0,
         child: ListView(padding: EdgeInsets.zero, children: [
           Container(
             color: ColorPallet.whiteColor,
             child: UserAccountsDrawerHeader(
-              accountName: const Text('Luciano',style:TextStyle(color:Colors.black),),
-              accountEmail: const Text('lucianodev@gmail.com',style:TextStyle(color:Color(0xFF4E4E4E))),
+              accountName: const Text(
+                'Luciano',
+                style: TextStyle(color: Colors.black),
+              ),
+              accountEmail: const Text('lucianodev@gmail.com',
+                  style: TextStyle(color: Color(0xFF4E4E4E))),
               currentAccountPicture: const SizedBox(
-                width: 72, // Adjust the size of the avatar
-                height: 72, // Adjust the size of the avatar
-          
+                width: 72,
+                height: 72,
                 child: CircleAvatar(
                   child: Icon(Icons.person),
                 ),
@@ -35,9 +36,7 @@ class DrawerWidget extends StatelessWidget {
               otherAccountsPictures: [
                 IconButton(
                   icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    // Handle edit profile functionality
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),

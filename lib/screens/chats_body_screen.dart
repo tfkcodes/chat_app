@@ -1,16 +1,16 @@
-import 'package:chat_app/constats/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:chat_app/constats/colors.dart';
+import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ChatScreen extends StatefulWidget {
   final Map<String, dynamic> contacts;
   final List<String?> messages;
-  final String? currentUser;
-  ChatScreen(
-      {required this.contacts,
-      required this.messages,
-      required this.currentUser});
+  ChatScreen({
+    super.key,
+    required this.contacts,
+    required this.messages,
+  });
   final List<SmsMessage> message = [];
   @override
   // ignore: library_private_types_in_public_api
@@ -25,23 +25,18 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     String messageText = _textController.text;
     if (messageText.isNotEmpty) {
-      // Create a new message map
       Map<String, dynamic> newMessage = {
         'isSent': true,
         'text': messageText,
       };
 
-      // Add the new message to the list
       setState(() {
         widget.messages.add(newMessage as String?);
       });
 
-      // Clear the text field
       _textController.clear();
     }
   }
-
-// implement the phonecall button with the phone number
 
   @override
   Widget build(BuildContext context) {
@@ -80,26 +75,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 itemCount: widget.messages.length,
                 itemBuilder: (context, index) {
                   String message = widget.messages[index]!;
-                  String? sender = widget.currentUser;
-                  bool isSentMessage = sender == widget.currentUser;
-                  return Align(
-                   
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      margin:
-                          const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-                      decoration: BoxDecoration(
-                        color: isSentMessage
-                            ? ColorPallet.sentMessageColor
-                            : ColorPallet.receivedMessageColor,
-                        borderRadius: BorderRadius.circular(16),
+                  return Column(
+                    children: [
+                      BubbleSpecialThree(
+                        text: message,
+                        color: Color(0xFFE8E8EE),
+                        tail: true,
+                        isSender: false,
                       ),
-                      child: Text(
-                        message,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
+                      SizedBox(
+                        height: 100,
+                      )
+                    ],
                   );
                 },
               ),
@@ -107,23 +94,32 @@ class _ChatScreenState extends State<ChatScreen> {
             const Divider(height: 1),
             Row(
               children: [
-                IconButton(onPressed: () {}, icon: const Icon(Icons.face)),
                 Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message.....',
-                      contentPadding: EdgeInsets.all(16),
-                      border: OutlineInputBorder(borderSide: BorderSide.none),
-                    ),
+                  child: MessageBar(
+                    onSend: (_) => print(_),
+                    actions: [
+                      InkWell(
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.black,
+                          size: 24,
+                        ),
+                        onTap: () {},
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 8, right: 8),
+                        child: InkWell(
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          onTap: () {},
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.image),
-                  onPressed: () {},
-                ),
-                IconButton(
-                    icon: const Icon(Icons.send), onPressed: _sendMessage),
               ],
             ),
           ],

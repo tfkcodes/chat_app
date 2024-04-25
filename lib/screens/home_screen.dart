@@ -1,9 +1,9 @@
-import 'package:anim_search_bar/anim_search_bar.dart';
-import 'package:flutter/material.dart';
-
+import 'chatting_screen.dart';
 import '../constats/colors.dart';
 import '../widgets/appbarwidget.dart';
-import 'chatting_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:anim_search_bar/anim_search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'Messages',
             style: TextStyle(color: ColorPallet.darkCOlor),
           ),
-          centerTitle: true,
+          centerTitle: false,
           actions: [
             AnimSearchBar(
               width: 250,
@@ -45,14 +45,58 @@ class _HomeScreenState extends State<HomeScreen> {
               boxShadow: false,
               onSubmitted: (p0) {},
             ),
-            IconButton(
-              icon: const Icon(Icons.more_vert),
-              onPressed: () {},
-            ),
+            PopupMenuButton<String>(itemBuilder: (BuildContext context) {
+              return <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'Profile',
+                  child: ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text('Profile'),
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'Settings',
+                  child: ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text('Settings'),
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'Help & Support',
+                  child: ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text('Help & Support'),
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'logout',
+                  child: ListTile(
+                    leading: Icon(Icons.logout),
+                    title: Text('Logout'),
+                  ),
+                ),
+              ];
+            }),
           ],
           iconTheme: IconThemeData(color: ColorPallet.darkCOlor),
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: 90,
+              width: 90,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  "assets/svg/msg.svg",
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            ),
+          ),
         ),
-        drawer: const DrawerWidget(),
         body: const ChattingScreen());
   }
 }
