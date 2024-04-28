@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:telephony/telephony.dart';
 import 'package:chat_app/constats/colors.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
-import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 
 class ChatScreen extends StatefulWidget {
   final Map<String, dynamic> contacts;
@@ -20,26 +20,22 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   // call the text editing controller
   final TextEditingController _textController = TextEditingController();
-  List<SmsMessage> message = [];
 
-  void _sendMessage() {
-    String messageText = _textController.text;
-    if (messageText.isNotEmpty) {
-      Map<String, dynamic> newMessage = {
-        'isSent': true,
-        'text': messageText,
-      };
-
-      setState(() {
-        widget.messages.add(newMessage as String?);
-      });
-
-      _textController.clear();
-    }
+  final Telephony telephony = Telephony.instance;
+  void _sendMessage(String value) async {
+    print("Sending $value");
+    await Telephony.instance.sendSms(
+        to: widget.contacts['phone'][0]
+            .toString()
+            .replaceAll("(", "")
+            .replaceAll(")", ""),
+        message: value);
   }
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "hello ${widget.contacts['phone'][0].toString().replaceAll("(", "").replaceAll(")", "")}");
     String name = widget.contacts['name'];
     return Scaffold(
       appBar: AppBar(
@@ -81,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         text: message,
                         color: Color(0xFFE8E8EE),
                         tail: true,
-                        isSender: false,
+                        isSender: true,
                       ),
                       SizedBox(
                         height: 100,
@@ -96,7 +92,9 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: MessageBar(
-                    onSend: (_) => print(_),
+                    onSend: (value) {
+                      _sendMessage(value);
+                    },
                     actions: [
                       InkWell(
                         child: Icon(

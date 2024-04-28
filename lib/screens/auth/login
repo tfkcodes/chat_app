@@ -1,0 +1,170 @@
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool _agreeToTerms = false;
+  final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
+
+  String msg = "";
+  bool isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Stack(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 120,
+                  ),
+                  Container(
+                    height: 90,
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/images/logo.png"))),
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  Text(
+                    "Welcome Back!",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 21,
+                        color: Theme.of(context).colorScheme.primary),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Sign in to continue to Mikopo Nafuu.",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onBackground),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    msg,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  FormBuilder(
+                    key: _formKey,
+                    child: Column(children: [
+                      const ITextField(
+                        name: 'username',
+                        hintText: 'Enter Email',
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const ITextField(
+                        name: 'password',
+                        hintText: 'Enter Password',
+                        suffixIcon: Icons.visibility,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  activeColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  side: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                  value: _agreeToTerms,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _agreeToTerms = value ?? false;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  'Remember me',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground),
+                                ),
+                              ],
+                            ),
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                _router.pushNamed('/forgot');
+                              },
+                              child: const Text("Forgot password?"))
+                        ],
+                      )
+                    ]),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  IButton(
+                      isLoading: isLoading,
+                      onPressed: () {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        try {
+                          if (_formKey.currentState!.saveAndValidate()) {
+                            Map<String, dynamic> formData =
+                                _formKey.currentState!.value;
+                            login(formData['username'], formData['password'],
+                                (errorMsg) {
+                              if (errorMsg == "Failed To Authenticate") {
+                                msg = errorMsg;
+                                isLoading = false;
+                              }
+                            });
+                          }
+                        } catch (e) {
+                          isLoading = false;
+                        }
+                      },
+                      label: "Log In"),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      const Text("Don't have an account ? "),
+                      TextButton(
+                          onPressed: () {
+                            _router.pushNamed('/request-otp');
+                          },
+                          child: const Text("Signup now")),
+                    ],
+                  )
+                ],
+              )),
+        ),
+        // Align(
+        //   alignment: Alignment.bottomCenter,
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(8.0),
+        //     child: Text("© $year Mikopo Nafuu. Crafted with  Blue Tick Tech."),
+        //   ),
+        // )
+      ],
+    ));
+  }
+}
