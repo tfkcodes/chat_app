@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:telephony/telephony.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:chat_app/constats/colors.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
+import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 
 class ChatScreen extends StatefulWidget {
   final Map<String, dynamic> contacts;
@@ -18,24 +19,19 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  // call the text editing controller
-  final TextEditingController _textController = TextEditingController();
-
-  final Telephony telephony = Telephony.instance;
-  void _sendMessage(String value) async {
-    print("Sending $value");
-    await Telephony.instance.sendSms(
-        to: widget.contacts['phone'][0]
-            .toString()
-            .replaceAll("(", "")
-            .replaceAll(")", ""),
-        message: value);
+  void _sendMessage(String message) async {
+    String _result = await sendSMS(message: message, recipients: [
+      widget.contacts['phone'][0]
+          .toString()
+          .replaceAll("(", "")
+          .replaceAll(")", "")
+    ]).catchError((onError) {
+      print(onError);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "hello ${widget.contacts['phone'][0].toString().replaceAll("(", "").replaceAll(")", "")}");
     String name = widget.contacts['name'];
     return Scaffold(
       appBar: AppBar(
