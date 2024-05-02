@@ -20,14 +20,19 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage(String message) async {
-    String _result = await sendSMS(message: message, recipients: [
-      widget.contacts['phone'][0]
-          .toString()
-          .replaceAll("(", "")
-          .replaceAll(")", "")
-    ]).catchError((onError) {
+    String _result = await sendSMS(
+        sendDirect: true,
+        message: message,
+        recipients: [
+          widget.contacts['phone'][0]
+              .toString()
+              .replaceAll("(", "")
+              .replaceAll(")", "")
+        ]).catchError((onError) {
       print(onError);
     });
+
+    print(_result);
   }
 
   @override

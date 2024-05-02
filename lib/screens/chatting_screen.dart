@@ -5,6 +5,7 @@ import 'package:chat_app/constats/colors.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:chat_app/screens/chats_body_screen.dart';
+import 'package:chat_app/screens/contacts/phonebook.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:chat_app/screens/widgets/message_list_Screen.dart';
@@ -54,46 +55,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
       setState(() => _messages = messages);
     } else {
       await Permission.sms.request();
-    }
-  }
-
-  Future<void> openPhonebookContacts() async {
-    var permission = await Permission.sms.status;
-    PermissionStatus contactStatus = await Permission.contacts.request();
-    if (permission.isGranted || contactStatus.isGranted) {
-      Iterable<Contact>? contacts = await ContactsService.getContacts();
-      if (contacts.isNotEmpty) {
-        // ignore: use_build_context_synchronously
-        Contact? selectedContact = await showDialog<Contact>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Select a contact'),
-            content: SizedBox(
-              width: double.maxFinite,
-              height: 300,
-              child: ListView.builder(
-                itemCount: contacts.length,
-                itemBuilder: (context, index) {
-                  Contact contact = contacts.elementAt(index);
-                  return ListTile(
-                    title: Text(contact.displayName ?? ''),
-                    onTap: () {
-                      Navigator.pop(context, contact);
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-
-        if (selectedContact != null) {
-          String phoneNumber = selectedContact.phones?.first.value ?? '';
-        } else {}
-      } else {}
-    } else {
-      await Permission.sms.request();
-      await Permission.contacts.request();
     }
   }
 
@@ -154,7 +115,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ),
       ),
       floatingActionButton: GestureDetector(
-        onTap: openPhonebookContacts,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PhonebookContactsScreen(),
+            ),
+          );
+        },
         child: Container(
           height: 40,
           width: 40,
