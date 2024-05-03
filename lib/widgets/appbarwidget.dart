@@ -1,10 +1,10 @@
 import '../constats/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/screens/feedback.dart';
-import 'package:chat_app/screens/settings.dart';
-import 'package:chat_app/screens/promotions.dart';
-import 'package:chat_app/screens/blockedtext.dart';
-import 'package:chat_app/screens/spantextscreen.dart';
+import 'package:chat_app/pages/feedback.dart';
+import 'package:chat_app/pages/settings.dart';
+import 'package:chat_app/pages/promotions.dart';
+import 'package:chat_app/pages/blockedtext.dart';
+import 'package:chat_app/pages/spantextscreen.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({

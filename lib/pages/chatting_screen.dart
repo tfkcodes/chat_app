@@ -1,14 +1,20 @@
+import 'package:flutter/widgets.dart';
+
 import '../widgets/chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:chat_app/constats/colors.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:contacts_service/contacts_service.dart';
+<<<<<<< HEAD:lib/screens/chatting_screen.dart
 import 'package:chat_app/screens/chats_body_screen.dart';
 import 'package:chat_app/screens/contacts/phonebook.dart';
+=======
+import 'package:chat_app/pages/chats_body_screen.dart';
+>>>>>>> 5813371 (remove login):lib/pages/chatting_screen.dart
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:chat_app/screens/widgets/message_list_Screen.dart';
+import 'package:chat_app/pages/widgets/message_list_Screen.dart';
 
 class ChattingScreen extends StatefulWidget {
   const ChattingScreen({Key? key}) : super(key: key);
@@ -63,55 +69,61 @@ class _ChattingScreenState extends State<ChattingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IChip(
+                  label: "All",
+                  isSelected: selected == "All",
+                  onTap: () {
+                    setState(() {
+                      selected = "All";
+                    });
+                  },
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                IChip(
+                  label: "Spam",
+                  isSelected: selected == "Spam",
+                  onTap: () {
+                    setState(() {
+                      selected = "Spam";
+                    });
+                  },
+                ),
+              ],
+            ),
+            Expanded(
+              child: Column(
                 children: [
-                  IChip(
-                    label: "All",
-                    isSelected: selected == "All",
-                    onTap: () {
-                      setState(() {
-                        selected = "All";
-                      });
-                    },
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  IChip(
-                    label: "Spam",
-                    isSelected: selected == "Spam",
-                    onTap: () {
-                      setState(() {
-                        selected = "Spam";
-                      });
-                    },
-                  ),
+                  if (selected == "All")
+                    _messages.isNotEmpty
+                        ? Expanded(
+                            child: MessagesListView(
+                              messages: _messages,
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              'No messages to show.\n Tap refresh button...',
+                              style: TextStyle(color: ColorPallet.primaryColor),
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                  else if (selected == "Spam")
+                    const Center(
+                      child: Text("Spam text"),
+                    )
                 ],
               ),
-              if (selected == "All")
-                _messages.isNotEmpty
-                    ? MessagesListView(
-                        messages: _messages,
-                      )
-                    : Center(
-                        child: Text(
-                          'No messages to show.\n Tap refresh button...',
-                          style: TextStyle(color: ColorPallet.primaryColor),
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-              else if (selected == "Spam")
-                const Center(
-                  child: Text("Spam text"),
-                )
-            ],
-          ),
+            )
+          ],
         ),
       ),
       floatingActionButton: GestureDetector(

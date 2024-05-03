@@ -1,13 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.chat_app">
     <!-- Read sms from phone book -->
-<uses-permission android:name="android.permission.READ_SMS"/>
-<uses-permission android:name="android.permission.RECEIVE_SMS"/>
-<uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
 
-<!-- read contacts from phone -->
-<uses-permission android:name="android.permission.READ_CONTACTS" />  
-<uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <!-- read contacts from phone -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />  
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
    <application
         android:label="Messages"

@@ -1,3 +1,4 @@
+import 'package:chat_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class IChip extends StatelessWidget {
@@ -19,14 +20,15 @@ class IChip extends StatelessWidget {
       child: ChoiceChip(
         label: Text(label),
         labelStyle: TextStyle(
-            color: isSelected
-                ? Theme.of(context).colorScheme.background
-                : Theme.of(context).colorScheme.onBackground),
+          color: isSelected
+              ? Theme.of(context).colorScheme.background
+              : Theme.of(context).colorScheme.onBackground,
+        ),
         selected: isSelected,
         onSelected: (selected) {
           onTap();
         },
-        selectedColor: Theme.of(context).colorScheme.secondary,
+        selectedColor: AppColors.primaryColor400,
       ),
     );
   }

@@ -1,18 +1,17 @@
 import 'chatting_screen.dart';
 import '../constats/colors.dart';
-import '../widgets/appbarwidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _MainPageState extends State<MainPage> {
   TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -47,13 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             PopupMenuButton<String>(itemBuilder: (BuildContext context) {
               return <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
-                  value: 'Profile',
-                  child: ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text('Profile'),
-                  ),
-                ),
+                // const PopupMenuItem<String>(
+                //   value: 'Profile',
+                //   child: ListTile(
+                //     leading: Icon(Icons.person),
+                //     title: Text('Profile'),
+                //   ),
+                // ),
                 const PopupMenuItem<String>(
                   value: 'Settings',
                   child: ListTile(
@@ -66,13 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListTile(
                     leading: Icon(Icons.person),
                     title: Text('Help & Support'),
-                  ),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'logout',
-                  child: ListTile(
-                    leading: Icon(Icons.logout),
-                    title: Text('Logout'),
                   ),
                 ),
               ];
