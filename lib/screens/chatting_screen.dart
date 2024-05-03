@@ -45,6 +45,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       final messages = await _query.querySms(kinds: [
         SmsQueryKind.inbox,
         SmsQueryKind.sent,
+        // SmsQueryKind.draft,
       ], count: 200, sort: true);
       if (messages.isNotEmpty) {
         contactsWithMessages.add(Contact());
