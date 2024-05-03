@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:chat_app/constats/colors.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -35,6 +36,19 @@ class _ChatScreenState extends State<ChatScreen> {
     print(_result);
   }
 
+  void _launchPhoneCall() async {
+    String phoneNumber = widget.contacts['phone'][0]
+        .toString()
+        .replaceAll("(", "")
+        .replaceAll(")", "");
+    String url = 'tel:$phoneNumber';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String name = widget.contacts['name'];
@@ -49,7 +63,9 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: [
           IconButton(
-              onPressed: () async {},
+              onPressed: () async {
+                _launchPhoneCall();
+              },
               icon: const Icon(
                 Icons.call,
               )),
@@ -80,9 +96,6 @@ class _ChatScreenState extends State<ChatScreen> {
                         tail: true,
                         isSender: true,
                       ),
-                      SizedBox(
-                        height: 100,
-                      )
                     ],
                   );
                 },
@@ -96,27 +109,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     onSend: (value) {
                       _sendMessage(value);
                     },
-                    actions: [
-                      InkWell(
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.black,
-                          size: 24,
-                        ),
-                        onTap: () {},
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 8, right: 8),
-                        child: InkWell(
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.green,
-                            size: 24,
-                          ),
-                          onTap: () {},
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ],

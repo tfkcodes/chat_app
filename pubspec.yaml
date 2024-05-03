@@ -39,7 +39,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.0.15
-  url_launcher: ^6.1.11
+  url_launcher: ^6.2.6
   skeletonizer: ^1.1.1
   chat_bubbles: ^1.6.0
   flutter_svg: ^2.0.10+1

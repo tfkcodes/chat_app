@@ -14,145 +14,142 @@ class MessagesListView extends StatefulWidget {
   final List<SmsMessage> messages;
 
   @override
-  State<MessagesListView> createState() => MessagesListViewState();
+  State<MessagesListView> createState() => _MessagesListViewState();
 }
 
-Future<List<Map<String, dynamic>>> getContactsWithMessages(
-    List<SmsMessage> messages) async {
-  List<Map<String, dynamic>> contactsWithMessages = [];
+class _MessagesListViewState extends State<MessagesListView> {
+  late List<Map<String, dynamic>> _contactsWithMessages;
 
-  for (var message in messages) {
-    Iterable<Contact> contacts = await ContactsService.getContactsForPhone(
-      message.address,
-    );
-    if (contacts.isNotEmpty) {
-      Contact contact = contacts.first;
+  @override
+  void initState() {
+    super.initState();
+    _loadContactsWithMessages();
+  }
 
-      bool contactExists = false;
-      int contactIndex = 0;
-      for (int i = 0; i < contactsWithMessages.length; i++) {
-        if (contactsWithMessages[i]['name'] == contact.displayName) {
-          contactExists = true;
-          contactIndex += i;
-          break;
-        }
-      }
-      if (contactExists) {
-        contactsWithMessages[contactIndex]['messages'].add(message.body);
-      } else {
-        Map<String, dynamic> contactWithMessages = {
-          'name': contact.displayName ?? '',
-          'messages': [message.body],
-          'phone': [contact.phones!.map((e) => e.value)]
-        };
-        contactsWithMessages.add(contactWithMessages);
-      }
+  Future<void> _loadContactsWithMessages() async {
+    try {
+      _contactsWithMessages = await getContactsWithMessages(widget.messages);
+      setState(() {});
+    } catch (e) {
+      // Handle error
+      print('Error loading messages: $e');
     }
   }
 
-  return contactsWithMessages;
-}
+  Future<List<Map<String, dynamic>>> getContactsWithMessages(
+      List<SmsMessage> messages) async {
+    List<Map<String, dynamic>> contactsWithMessages = [];
 
-class MessagesListViewState extends State<MessagesListView> {
+    for (var message in messages) {
+      Iterable<Contact> contacts = await ContactsService.getContactsForPhone(
+        message.address,
+      );
+      if (contacts.isNotEmpty) {
+        Contact contact = contacts.first;
+
+        var contactIndex = contactsWithMessages.indexWhere(
+          (element) => element['name'] == contact.displayName,
+        );
+
+        if (contactIndex != -1) {
+          contactsWithMessages[contactIndex]['messages'].add(message.body);
+        } else {
+          contactsWithMessages.add({
+            'name': contact.displayName ?? '',
+            'messages': [message.body],
+            'phone': contact.phones?.map((e) => e.value).toList() ?? [],
+          });
+        }
+      }
+    }
+
+    return contactsWithMessages;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: getContactsWithMessages(widget.messages),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<Map<String, dynamic>> contactsWithMessages = snapshot.data!;
-          return Column(
-            children: [
-              Divider(),
-              ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: contactsWithMessages.length,
-                itemBuilder: (BuildContext context, index) {
-                  String name = contactsWithMessages[index]['name'];
-                  List<String?> messages =
-                      contactsWithMessages[index]['messages'];
+    return _contactsWithMessages.isEmpty
+        ? _buildLoadingSkeleton()
+        : _buildMessagesList();
+  }
 
-                  List<String> nameParts = name.split(' ');
-                  String firstName = nameParts.first;
-
-                  int hashCode = name.hashCode;
-                  Color backgroundColor =
-                      Color((hashCode & 0xFF0000FF) | 0xFF808080);
-                  print("heeee ${contactsWithMessages[index]['phone']}");
-                  return Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: ListTile(
-                      leading: SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: CircleAvatar(
-                          backgroundColor: backgroundColor,
-                          child: Text(
-                            firstName.substring(0, 2).toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Text(
-                        messages.join('\n'),
-                        style: const TextStyle(
-                          color: Colors.grey,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChatScreen(
-                              contacts: contactsWithMessages[index],
-                              messages: contactsWithMessages[index]['messages'],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+  Widget _buildLoadingSkeleton() {
+    return Center(
+      child: SizedBox(
+        height: 600,
+        child: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (BuildContext context, index) {
+            return const Skeletonizer(
+              child: ListTile(
+                title: Text("Message title"),
+                subtitle: Text("Message body max line 3"),
+                leading: CircleAvatar(),
               ),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              'Something went wrong try again',
-              style: TextStyle(color: ColorPallet.primaryColor),
-              textAlign: TextAlign.center,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessagesList() {
+    return Column(
+      children: [
+        Divider(),
+        Expanded(
+          child: ListView.builder(
+            itemCount: _contactsWithMessages.length,
+            itemBuilder: (BuildContext context, index) {
+              return _buildMessageListItem(_contactsWithMessages[index]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMessageListItem(Map<String, dynamic> contact) {
+    String name = contact['name'];
+    List<String?> messages = contact['messages'];
+
+    String firstName = name.split(' ').first;
+
+    int hashCode = name.hashCode;
+    Color backgroundColor = Color((hashCode & 0xFF0000FF) | 0xFF808080);
+
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: backgroundColor,
+          child: Text(
+            firstName.substring(0, 2).toUpperCase(),
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+        title: Text(
+          name,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          messages.join('\n'),
+          style: const TextStyle(color: Colors.grey),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChatScreen(
+                contacts: contact,
+                messages: messages,
+              ),
             ),
           );
-        } else {
-          return Center(
-              child: SizedBox(
-            height: 600,
-            child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (BuildContext conext, index) {
-                  return const Skeletonizer(
-                    child: ListTile(
-                      title: Text("Message title"),
-                      subtitle: Text("Message body max line 3"),
-                      leading: CircleAvatar(),
-                    ),
-                  );
-                }),
-          ));
-        }
-      },
+        },
+      ),
     );
   }
 }
