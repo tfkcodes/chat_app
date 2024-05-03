@@ -1,3 +1,5 @@
+import 'package:chat_app/pages/home/test_sms.dart';
+
 import 'chatting_screen.dart';
 import '../constats/colors.dart';
 import 'package:flutter/material.dart';
@@ -46,13 +48,23 @@ class _MainPageState extends State<MainPage> {
             ),
             PopupMenuButton<String>(itemBuilder: (BuildContext context) {
               return <PopupMenuEntry<String>>[
-                // const PopupMenuItem<String>(
-                //   value: 'Profile',
-                //   child: ListTile(
-                //     leading: Icon(Icons.person),
-                //     title: Text('Profile'),
-                //   ),
-                // ),
+                PopupMenuItem<String>(
+                  value: 'Profile',
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TestMessageApp(),
+                        ),
+                      );
+                    },
+                    child: const ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text('sms test'),
+                    ),
+                  ),
+                ),
                 const PopupMenuItem<String>(
                   value: 'Settings',
                   child: ListTile(

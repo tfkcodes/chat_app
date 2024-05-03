@@ -22,14 +22,15 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage(String message) async {
     String _result = await sendSMS(
-        sendDirect: true,
-        message: message,
-        recipients: [
-          widget.contacts['phone'][0]
-              .toString()
-              .replaceAll("(", "")
-              .replaceAll(")", "")
-        ]).catchError((onError) {
+      sendDirect: true,
+      message: message,
+      recipients: [
+        widget.contacts['phone'][0]
+            .toString()
+            .replaceAll("(", "")
+            .replaceAll(")", "")
+      ],
+    ).catchError((onError) {
       print(onError);
     });
 
@@ -70,10 +71,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 Icons.call,
               )),
           IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.more_vert,
-              )),
+            onPressed: () {},
+            icon: const Icon(
+              Icons.more_vert,
+            ),
+          ),
         ],
         iconTheme: IconThemeData(
           color: ColorPallet.darkCOlor,
@@ -92,10 +94,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       BubbleSpecialThree(
                         text: message,
-                        color: Color(0xFFE8E8EE),
+                        color: const Color(0xFFE8E8EE),
                         tail: true,
                         isSender: true,
                       ),
+                      const SizedBox(
+                        height: 10,
+                      )
                     ],
                   );
                 },
@@ -133,7 +138,12 @@ class morePopUpMenuWidget extends StatelessWidget {
         children: [
           Column(
             children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.abc))
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.abc,
+                ),
+              )
             ],
           )
         ],
