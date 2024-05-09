@@ -61,27 +61,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
     }
   }
 
-  // Future<void> syncMoreMessagesAndContacts() async {
-  //   PermissionStatus smsPermission = await Permission.sms.status;
-  //   PermissionStatus contactPermission = await Permission.contacts.status;
-  //   if (smsPermission.isGranted && contactPermission.isGranted) {
-  //     final messages = await _query.querySms(kinds: [
-  //       SmsQueryKind.inbox,
-  //       SmsQueryKind.sent,
-  //       // SmsQueryKind.draft,
-  //     ], count: 200, sort: true);
-  //     if (messages.isNotEmpty) {
-  //       contactsWithMessages.add(Contact());
-  //     }
-  //     debugPrint('sms inbox messages: ${messages.length}');
-
-  //     setState(() => _messages = messages);
-  //   } else {
-  //     await Permission.sms.request();
-  //     await Permission.contacts.request();
-  //   }
-  // }
-
   String selected = 'All';
 
   @override
