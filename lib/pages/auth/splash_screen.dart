@@ -71,7 +71,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
                       height: 100.0,
                     ),
                     Text(
-                      'Spam',
+                      'Sms',
                       style: SafeGoogleFont(
                         'Montserrat',
                         color: Colors.white,
@@ -81,7 +81,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
                       ),
                     ),
                     Text(
-                      'Detector',
+                      'Copying',
                       style: SafeGoogleFont(
                         'Montserrat',
                         color: Colors.white,

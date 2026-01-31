@@ -1,12 +1,7 @@
-import 'package:flutter/widgets.dart';
-
-import 'dart:async';
-import '../../constats/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:skeletonizer/skeletonizer.dart';
-import 'package:contacts_service/contacts_service.dart';
-import 'package:chat_app/pages/chats_body_screen.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
+
+import '../chats_body_screen.dart';
 
 class MessagesListView extends StatefulWidget {
   const MessagesListView({
@@ -21,138 +16,55 @@ class MessagesListView extends StatefulWidget {
 }
 
 class _MessagesListViewState extends State<MessagesListView> {
-  late List<Map<String, dynamic>> _contactsWithMessages;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadContactsWithMessages();
-  }
-
-  Future<void> _loadContactsWithMessages() async {
-    try {
-      _contactsWithMessages = await getContactsWithMessages(widget.messages);
-      setState(() {});
-    } catch (e) {
-      // Handle error
-      print('Error loading messages: $e');
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> getContactsWithMessages(
-      List<SmsMessage> messages) async {
-    List<Map<String, dynamic>> contactsWithMessages = [];
-
-    for (var message in messages) {
-      Iterable<Contact> contacts = await ContactsService.getContactsForPhone(
-        message.address,
-      );
-      if (contacts.isNotEmpty) {
-        Contact contact = contacts.first;
-
-        var contactIndex = contactsWithMessages.indexWhere(
-          (element) => element['name'] == contact.displayName,
-        );
-
-        if (contactIndex != -1) {
-          contactsWithMessages[contactIndex]['messages'].add(message.body);
-        } else {
-          contactsWithMessages.add({
-            'name': contact.displayName ?? '',
-            'messages': [message.body],
-            'phone': contact.phones?.map((e) => e.value).toList() ?? [],
-          });
-        }
-      }
-    }
-
-    return contactsWithMessages;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return _contactsWithMessages.isEmpty
-        ? _buildLoadingSkeleton()
-        : _buildMessagesList();
-  }
+    return ListView.separated(
+      itemCount: widget.messages.length,
+      separatorBuilder: (_, __) => const Divider(),
+      itemBuilder: (context, index) {
+        final sms = widget.messages[index];
+        final sender = sms.address ?? 'Unknown';
+        final body = sms.body ?? '';
 
-  Widget _buildLoadingSkeleton() {
-    return Center(
-      child: SizedBox(
-        height: 600,
-        child: ListView.builder(
-          itemCount: 10,
-          itemBuilder: (BuildContext context, index) {
-            return const Skeletonizer(
-              child: ListTile(
-                title: Text("Message title"),
-                subtitle: Text("Message body max line 3"),
-                leading: CircleAvatar(),
+        return ListTile(
+          leading: CircleAvatar(
+            backgroundColor: Colors.blueGrey,
+            child: Text(
+              sender.substring(0, 1).toUpperCase(),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          title: Text(
+            sender,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            body,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: Text(
+            _formatDate(sms.date),
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ChatScreen(
+                  contact: sender,
+                  messages: [body],
+                ),
               ),
             );
           },
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildMessagesList() {
-    return Column(
-      children: [
-        Divider(),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _contactsWithMessages.length,
-            itemBuilder: (BuildContext context, index) {
-              return _buildMessageListItem(_contactsWithMessages[index]);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMessageListItem(Map<String, dynamic> contact) {
-    String name = contact['name'];
-    List<String?> messages = contact['messages'];
-
-    String firstName = name.split(' ').first;
-
-    int hashCode = name.hashCode;
-    Color backgroundColor = Color((hashCode & 0xFF0000FF) | 0xFF808080);
-
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: backgroundColor,
-          child: Text(
-            firstName.substring(0, 2).toUpperCase(),
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-        title: Text(
-          name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          messages.join('\n'),
-          style: const TextStyle(color: Colors.grey),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ChatScreen(
-                contacts: contact,
-                messages: messages,
-              ),
-            ),
-          );
-        },
-      ),
-    );
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    return '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

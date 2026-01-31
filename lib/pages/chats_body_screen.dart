@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_sms/flutter_sms.dart';
 import 'package:chat_app/constats/colors.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatScreen extends StatefulWidget {
-  final Map<String, dynamic> contacts;
+  final String? contact;
   final List<String?> messages;
   ChatScreen({
     super.key,
-    required this.contacts,
+    required this.contact,
     required this.messages,
   });
   final List<SmsMessage> message = [];
@@ -25,10 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
       sendDirect: true,
       message: message,
       recipients: [
-        widget.contacts['phone'][0]
-            .toString()
-            .replaceAll("(", "")
-            .replaceAll(")", "")
+        widget.contact.toString().replaceAll("(", "").replaceAll(")", "")
       ],
     ).catchError((onError) {
       print(onError);
@@ -38,10 +35,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _launchPhoneCall() async {
-    String phoneNumber = widget.contacts['phone'][0]
-        .toString()
-        .replaceAll("(", "")
-        .replaceAll(")", "");
+    String phoneNumber =
+        widget.contact.toString().replaceAll("(", "").replaceAll(")", "");
     String url = 'tel:$phoneNumber';
     if (await canLaunch(url)) {
       await launch(url);
@@ -52,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String name = widget.contacts['name'];
+    String name = widget.contact.toString();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorPallet.whiteColor,
